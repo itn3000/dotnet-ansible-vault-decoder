@@ -10,8 +10,7 @@ namespace dotnet_ansible_vault_decoder
         }
     }
 
-    class EncodingBatch
+    class EncodingBatch : MicroBatchFramework.BatchBase
     {
-
     }
 }
