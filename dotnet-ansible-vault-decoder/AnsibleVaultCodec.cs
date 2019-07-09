@@ -11,9 +11,9 @@ namespace dotnet_ansible_vault_decoder
 {
     public class AnsibleVaultCodec
     {
-        public void Decode(string vaultFilePath, byte[] password, Stream output)
+        public void Decode(TextReader vaultFileReader, byte[] password, Stream output)
         {
-            var vaultFile = AnsibleVaultFile.Load(vaultFilePath);
+            var vaultFile = AnsibleVaultFile.Load(vaultFileReader);
             var cipher = CipherUtilities.GetCipher("AES/CTR/PKCS7Padding");
             var pbkdf2 = new Rfc2898DeriveBytes(password, vaultFile.Salt, 10000, HashAlgorithmName.SHA256);
             var derived = pbkdf2.GetBytes(32 + 32 + 16);
@@ -22,7 +22,7 @@ namespace dotnet_ansible_vault_decoder
             var iv = derived.AsSpan(64, 16).ToArray();
             var hmac256 = new HMACSHA256(hmacKey);
             var actualhmac = hmac256.ComputeHash(vaultFile.EncryptedBytes);
-            if(!actualhmac.AsSpan().SequenceEqual(vaultFile.ExpectedHMac))
+            if (!actualhmac.AsSpan().SequenceEqual(vaultFile.ExpectedHMac))
             {
                 throw new InvalidKeyException("HMAC check error: invalid password");
             }
@@ -31,7 +31,15 @@ namespace dotnet_ansible_vault_decoder
             var decrypted = cipher.DoFinal(vaultFile.EncryptedBytes);
             output.Write(decrypted.AsSpan());
         }
-        public void Encode(byte[] data, byte[] password, byte[] salt, TextWriter output, int width)
+        public void Decode(string vaultFilePath, byte[] password, Stream output)
+        {
+            using(var stm = File.OpenRead(vaultFilePath))
+            using(var sr = new StreamReader(stm, Encoding.UTF8))
+            {
+                Decode(sr, password, output);
+            }
+        }
+        public void Encode(byte[] data, byte[] password, byte[] salt, TextWriter output, string label, int width)
         {
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
             var derived = pbkdf2.GetBytes(32 + 32 + 16);
@@ -49,7 +57,7 @@ namespace dotnet_ansible_vault_decoder
             var hmac256 = new HMACSHA256(hmacKey);
             vaultFile.EncryptedBytes = encrypted;
             vaultFile.ExpectedHMac = hmac256.ComputeHash(encrypted);
-            AnsibleVaultFile.Save(vaultFile, output, width);
+            AnsibleVaultFile.Save(vaultFile, output, label, width);
         }
     }
 }
