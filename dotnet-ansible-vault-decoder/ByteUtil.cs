@@ -21,7 +21,7 @@ namespace dotnet_ansible_vault_decoder
             }
             else
             {
-                throw new Exception($"invalid value:{sp}");
+                throw new Exception($"invalid value:{sp}({(int)sp})");
             }
         }
         public static byte[] ConvertToBytes(ArraySegment<string> lines)
@@ -63,7 +63,7 @@ namespace dotnet_ansible_vault_decoder
             }
             else
             {
-                throw new ArgumentOutOfRangeException($"invalid byte value:{b}");
+                throw new ArgumentOutOfRangeException($"invalid byte value:{(int)b}");
             }
         }
         public static void ConvertToHexChars(ReadOnlySpan<byte> data, Span<char> dest)
@@ -77,6 +77,17 @@ namespace dotnet_ansible_vault_decoder
                 dest[i * 2] = ByteToHexChar((byte)(data[i] >> 4));
                 dest[i * 2 + 1] = ByteToHexChar((byte)(data[i] & 0xf));
             }
+        }
+        public static string ConvertToHexString(ReadOnlySpan<byte> data)
+        {
+            return string.Create(data.Length * 2, data.ToArray(), (c, state) =>
+            {
+                for(int i = 0;i<state.Length;i++)
+                {
+                    c[i * 2] = ByteToHexChar((byte)(state[i] >> 4));
+                    c[i * 2 + 1] = ByteToHexChar((byte)(state[i] & 0xf));
+                }
+            });
         }
     }
 }

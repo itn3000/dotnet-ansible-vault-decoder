@@ -63,13 +63,15 @@ namespace dotnet_ansible_vault_decoder
             {
                 output.WriteLine($"{AnsibleVaultSignature};{f.Version};{f.Algorithm};{f.Label}");
             }
-            var data = new byte[f.Salt.Length + f.ExpectedHMac.Length + f.EncryptedBytes.Length + 2];
+            var data = new byte[f.Salt.Length * 2 + f.ExpectedHMac.Length * 2 + f.EncryptedBytes.Length * 2 + 2];
             var dataSpan = data.AsSpan();
-            f.Salt.AsSpan().CopyTo(dataSpan);
-            dataSpan[f.Salt.Length] = 0x0a;
-            f.ExpectedHMac.AsSpan().CopyTo(dataSpan.Slice(f.Salt.Length + 1));
-            dataSpan[f.Salt.Length + 1 + f.ExpectedHMac.Length] = 0x0a;
-            f.EncryptedBytes.AsSpan().CopyTo(dataSpan.Slice(f.Salt.Length + f.ExpectedHMac.Length + 2));
+            Encoding.ASCII.GetBytes(ByteUtil.ConvertToHexString(f.Salt)).AsSpan().CopyTo(dataSpan);
+            dataSpan[f.Salt.Length * 2] = 0x0a;
+
+            Encoding.ASCII.GetBytes(ByteUtil.ConvertToHexString(f.ExpectedHMac)).AsSpan().CopyTo(dataSpan.Slice(f.Salt.Length * 2 + 1));
+            dataSpan[f.Salt.Length * 2 + 1 + f.ExpectedHMac.Length * 2] = 0x0a;
+
+            Encoding.ASCII.GetBytes(ByteUtil.ConvertToHexString(f.EncryptedBytes)).AsSpan().CopyTo(dataSpan.Slice(f.Salt.Length * 2 + f.ExpectedHMac.Length * 2 + 2));
             Span<char> buffer = stackalloc char[width];
             while (!dataSpan.IsEmpty)
             {

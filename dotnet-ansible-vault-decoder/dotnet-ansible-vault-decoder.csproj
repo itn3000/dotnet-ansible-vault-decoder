@@ -4,9 +4,21 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>dotnet_ansible_vault_decoder</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <PackAsTool>true</PackAsTool>
+    <Version>0.1.0</Version>
+    <ToolCommandName>dotnet-anv</ToolCommandName>
+    <PackageId>dotnet-ansible-vault-decoder</PackageId>
+    <PackageProjectUrl>https://github.com/itn3000/dotnet-ansible-vault-decoder</PackageProjectUrl>
+    <PackageTags>dotnet tool ansible vault</PackageTags>
+    <Copyright>Copyright (C) 2019 Itn3000</Copyright>
+    <Authors>itn3000</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandlineParser" Version="2.5.0" />
+    <PackageReference Include="McMaster.Extensions.CommandlineUtils" Version="2.3.4" />
     <PackageReference Include="MicroBatchFramework" Version="1.2.0" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.5" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
