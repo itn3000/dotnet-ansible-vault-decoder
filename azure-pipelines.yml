@@ -1,0 +1,68 @@
+trigger:
+  branches:
+    include:
+      - refs/tags/*
+      - "master"
+stages:
+  - stage: Build
+    jobs:
+      - job:
+        strategy:
+          matrix:
+            windows:
+              imageName: 'vs2017-win2016'
+              rid: "win-x64"
+              PLATFORMLINKER: ""
+              ExE_FILE_ExT: ".exe"
+        pool:
+          vmImage: $(imageName)
+
+        steps:
+          - script: |
+              sudo apt-get update
+              sudo apt-get install -y libkrb5-dev
+            condition: "eq(variables['imageName'],'ubuntu-16.04')"
+            name: "install_packages"
+          - task: DotNetCoreCLI@2
+            name: "restore_solution"
+            displayName: "restoring solution"
+            inputs:
+              command: 'restore'
+              projects: "dotnet-anv.sln"
+          - task: DotNetCoreCLI@2
+            name: "build_solution"
+            inputs:
+              command: "build"
+              configuration: "release"
+              projects: "dotnet-anv.sln"
+          - task: DotNetCoreCLI@2
+            name: "test_solution"
+            inputs:
+              command: "test"
+              configuration: "Release"
+              projects: "dotnet-anv.sln"
+          - task: DotNetCoreCLI@2
+            name: "pack_solution"
+            inputs:
+              command: "pack"
+              configuration: "release"
+              packagesToPack: "dotnet-text-encoder/dotnet-text-encoder.csproj"
+          - task: DotNetCoreCLI@2
+            name: "publish_project"
+            inputs:
+              command: "custom"
+              custom: "publish"
+              arguments: "-c Release"
+              projects: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
+              publishWebProjects: false
+          - task: CopyFiles@2
+            name: "copying_nupkg"
+            inputs:
+              sourceFolder: "dotnet-ansible-vault-decoder/bin/Release"
+              contents: "**/*.nupkg"
+              targetFolder: "$(Build.ArtifactStagingDirectory)"
+          - task: PublishBuildArtifacts@1
+            name: "publishing_artifacts"
+            inputs:
+              pathToPublish: "$(Build.ArtifactStagingDirectory)"
+              artifactName: "dotnet-anv-$(rid)"
