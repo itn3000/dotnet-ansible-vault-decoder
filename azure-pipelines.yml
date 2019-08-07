@@ -117,7 +117,7 @@ stages:
           - task: GitHubRelease@0
             displayName: "releasing github"
             inputs:
-              gitHubConnection: "dotnet-ansible-vault-decoder"
+              gitHubConnection: "dotnet-ansible-vault-decoder-servicetoken"
               action: create
               target: "$(Build.SourceVersion)"
               assets: "$(Build.ArtifactStagingDirectory)/**/*"
