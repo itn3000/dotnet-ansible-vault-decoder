@@ -15,11 +15,18 @@
     <Authors>itn3000</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableCoreRT)' != 'true'">
+    <!-- <NativeCompilationDuringPublish>false</NativeCompilationDuringPublish> -->
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandlineUtils" Version="2.3.4" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.5" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" />
+  </ItemGroup>
+  <ItemGroup>
+    <RdXmlFile Include="rd.xml"/>
   </ItemGroup>
 
 </Project>

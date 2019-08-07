@@ -14,6 +14,16 @@ stages:
               rid: "win-x64"
               PLATFORMLINKER: ""
               ExE_FILE_ExT: ".exe"
+            linux-x64:
+              imageName: 'ubuntu-16.04'
+              rid: "linux-x64"
+              PLATFORMLINKER: "clang-6.0"
+              EXE_FILE_EXT: ""
+            macos-x64:
+              imageName: "macos-10.13"
+              rid: "osx-x64"
+              PLATFORMLINKER: ""
+              EXE_FILE_EXT: ""
         pool:
           vmImage: $(imageName)
 
@@ -52,7 +62,7 @@ stages:
             inputs:
               command: "custom"
               custom: "publish"
-              arguments: "-c Release"
+              arguments: "-c Release -r $(rid) -p:PackAsTool=false"
               projects: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
               publishWebProjects: false
           - task: CopyFiles@2
@@ -61,6 +71,21 @@ stages:
               sourceFolder: "dotnet-ansible-vault-decoder/bin/Release"
               contents: "**/*.nupkg"
               targetFolder: "$(Build.ArtifactStagingDirectory)"
+          - task: CopyFiles@2
+            name: "copying_executable"
+            displayName: "copying binary executable"
+            inputs:
+              sourceFolder: "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$(rid)/native/"
+              contents: "dotnet-ansible-vault-decoder$(ExE_FILE_ExT)"
+              targetFolder: "$(Build.ArtifactStagingDirectory)/dotnet-anv-$(rid)$(EXE_FILE_EXT)"
+          - task: CopyFiles@2
+            name: "copying_executable"
+            displayName: "copying pdb"
+            inputs:
+              sourceFolder: "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$(rid)/native/"
+              contents: "dotnet-ansible-vault-decoder.pdb"
+              targetFolder: "$(Build.ArtifactStagingDirectory)/dotnet-anv-$(rid).pdb"
+            condition: "eq(variables['imageName'],'windows-2019')"
           - task: PublishBuildArtifacts@1
             name: "publishing_artifacts"
             inputs:
@@ -79,12 +104,22 @@ stages:
             inputs:
               artifact: dotnet-anv-win-x64
               path: "$(Build.ArtifactStagingDirectory)"
+          - task: DownloadPipelineArtifact@2
+            displayName: download linux-x64
+            inputs:
+              artifact: dotnet-anv-linux-x64
+              path: "$(Build.ArtifactStagingDirectory)"
+          - task: DownloadPipelineArtifact@2
+            displayName: download osx-x64
+            inputs:
+              artifact: dotnet-anv-osx-x64
+              path: "$(Build.ArtifactStagingDirectory)"
           - task: GitHubRelease@0
             displayName: "releasing github"
             inputs:
               gitHubConnection: "dotnet-ansible-vault-decoder"
               action: create
               target: "$(Build.SourceVersion)"
-              assets: "$(Build.ArtifactStagingDirectory)/*"
+              assets: "$(Build.ArtifactStagingDirectory)/**/*"
               isDraft: true
 

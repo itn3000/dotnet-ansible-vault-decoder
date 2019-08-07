@@ -1,0 +1,9 @@
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+    <Application>
+        <Assembly Name="BouncyCastle.Crypto">
+            <Type Name="Org.BouncyCastle.Security.CipherUtilities+CipherAlgorithm[]" Dynamic="Required All" />
+            <Type Name="Org.BouncyCastle.Security.CipherUtilities+CipherMode[]" Dynamic="Required All" />
+            <Type Name="Org.BouncyCastle.Security.CipherUtilities+CipherPadding[]" Dynamic="Required All" />
+        </Assembly>
+    </Application>
+</Directives>
