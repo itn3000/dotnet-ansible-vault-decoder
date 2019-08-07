@@ -38,28 +38,38 @@ stages:
             displayName: "restoring solution"
             inputs:
               command: 'restore'
+              feedsToUse: config
+              nugetConfigPath: "nuget.config"
               projects: "dotnet-anv.sln"
           - task: DotNetCoreCLI@2
             name: "build_solution"
             inputs:
               command: "build"
+              feedsToUse: config
+              nugetConfigPath: "nuget.config"
               configuration: "release"
               projects: "dotnet-anv.sln"
           - task: DotNetCoreCLI@2
             name: "test_solution"
             inputs:
               command: "test"
+              feedsToUse: config
+              nugetConfigPath: "nuget.config"
               configuration: "Release"
               projects: "dotnet-anv.sln"
           - task: DotNetCoreCLI@2
             name: "pack_solution"
             inputs:
               command: "pack"
+              feedsToUse: config
+              nugetConfigPath: "nuget.config"
               configuration: "release"
               packagesToPack: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
           - task: DotNetCoreCLI@2
             name: "publish_project"
             inputs:
+              feedsToUse: config
+              nugetConfigPath: "nuget.config"
               command: "custom"
               custom: "publish"
               arguments: "-c Release -r $(rid) -p:PackAsTool=false"
