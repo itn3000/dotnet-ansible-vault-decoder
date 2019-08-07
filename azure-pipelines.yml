@@ -79,7 +79,7 @@ stages:
               contents: "dotnet-ansible-vault-decoder$(ExE_FILE_ExT)"
               targetFolder: "$(Build.ArtifactStagingDirectory)/dotnet-anv-$(rid)$(EXE_FILE_EXT)"
           - task: CopyFiles@2
-            name: "copying_executable"
+            name: "copying_pdb"
             displayName: "copying pdb"
             inputs:
               sourceFolder: "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$(rid)/native/"
