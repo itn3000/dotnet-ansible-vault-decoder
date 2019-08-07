@@ -67,6 +67,8 @@ stages:
               packagesToPack: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
           - task: DotNetCoreCLI@2
             name: "publish_project"
+            env:
+              CppCompilerAndLinker: $(PLATFORMLINKER)
             inputs:
               feedsToUse: config
               nugetConfigPath: "nuget.config"
