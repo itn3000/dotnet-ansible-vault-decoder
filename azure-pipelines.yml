@@ -72,7 +72,7 @@ stages:
               nugetConfigPath: "nuget.config"
               command: "custom"
               custom: "publish"
-              arguments: "-c Release -r $(rid) -p:PackAsTool=false"
+              arguments: "-c Release -r $(rid) -p:PackAsTool=false -p:WithCoreRT=true"
               projects: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
               publishWebProjects: false
           - task: CopyFiles@2
