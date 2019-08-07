@@ -82,21 +82,30 @@ stages:
             inputs:
               sourceFolder: "dotnet-ansible-vault-decoder/bin/Release"
               contents: "**/*.nupkg"
-              targetFolder: "$(Build.ArtifactStagingDirectory)"
-          - task: CopyFiles@2
+              targetFolder: "$(Build.ArtifactStagingDirectory)/$(rid)"
+          - task: Bash@3
+            name: "stripping_executable"
+            displayName: stripping executable file
+            inputs:
+              script: |
+                strip dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$RID/native/dotnet-ansible-vault-decoder$EXE_FILE_EXT
+            condition: "ne(variables['imageName'],'windows-2019')"
+          - task: PowerShell@2
             name: "copying_executable"
             displayName: "copying binary executable"
             inputs:
-              sourceFolder: "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$(rid)/native/"
-              contents: "dotnet-ansible-vault-decoder$(ExE_FILE_ExT)"
-              targetFolder: "$(Build.ArtifactStagingDirectory)/dotnet-anv-$(rid)$(EXE_FILE_EXT)"
-          - task: CopyFiles@2
+              script: |
+                $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder$($env:EXE_FILE_EXT)"
+                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID)$($env:EXE_FILE_EXT)"
+                Copy-Item $srcpath $destpath
+          - task: PowerShell@2
             name: "copying_pdb"
             displayName: "copying pdb"
             inputs:
-              sourceFolder: "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$(rid)/native/"
-              contents: "dotnet-ansible-vault-decoder.pdb"
-              targetFolder: "$(Build.ArtifactStagingDirectory)/dotnet-anv-$(rid).pdb"
+              script: |
+                $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder.pdb"
+                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID).pdb"
+                Copy-Item $srcpath $destpath
             condition: "eq(variables['imageName'],'windows-2019')"
           - task: PublishBuildArtifacts@1
             name: "publishing_artifacts"
