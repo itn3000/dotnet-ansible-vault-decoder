@@ -30,7 +30,7 @@ stages:
         steps:
           - script: |
               sudo apt-get update
-              sudo apt-get install -y libkrb5-dev
+              sudo apt-get install -y libkrb5-dev libcurl-dev
             condition: "eq(variables['imageName'],'ubuntu-16.04')"
             name: "install_packages"
           - task: DotNetCoreCLI@2
