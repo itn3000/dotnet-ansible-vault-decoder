@@ -98,7 +98,7 @@ stages:
               targetType: inline
               script: |
                 $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder$($env:EXE_FILE_EXT)"
-                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID)$($env:EXE_FILE_EXT)"
+                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$($env:RID)$($env:EXE_FILE_EXT)"
                 Copy-Item $srcpath $destpath
           - task: PowerShell@2
             name: "copying_pdb"
@@ -107,7 +107,7 @@ stages:
               targetType: inline
               script: |
                 $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder.pdb"
-                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID).pdb"
+                $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$($env:RID).pdb"
                 Copy-Item $srcpath $destpath
             condition: "eq(variables['imageName'],'windows-2019')"
           - task: PublishBuildArtifacts@1
