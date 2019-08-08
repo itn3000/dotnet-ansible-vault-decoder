@@ -63,7 +63,7 @@ stages:
               command: "pack"
               feedsToUse: config
               nugetConfigPath: "nuget.config"
-              configuration: "release"
+              configuration: "Release"
               packagesToPack: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
               includesymbols: true
           - task: CopyFiles@2
