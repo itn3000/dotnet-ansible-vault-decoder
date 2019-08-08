@@ -65,6 +65,7 @@ stages:
               nugetConfigPath: "nuget.config"
               configuration: "release"
               packagesToPack: "dotnet-ansible-vault-decoder/dotnet-ansible-vault-decoder.csproj"
+              includesymbols: true
           - task: CopyFiles@2
             name: "copying_nupkg"
             inputs:
