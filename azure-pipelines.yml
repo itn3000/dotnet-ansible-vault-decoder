@@ -83,14 +83,6 @@ stages:
               sourceFolder: "dotnet-ansible-vault-decoder/bin/Release"
               contents: "**/*.nupkg"
               targetFolder: "$(Build.ArtifactStagingDirectory)/$(rid)"
-          - task: Bash@3
-            name: "stripping_executable"
-            displayName: stripping executable file
-            inputs:
-              targetType: inline
-              script: |
-                strip dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$RID/native/dotnet-ansible-vault-decoder$EXE_FILE_EXT
-            condition: "ne(variables['imageName'],'windows-2019')"
           - task: PowerShell@2
             name: "copying_executable"
             displayName: "copying binary executable"
