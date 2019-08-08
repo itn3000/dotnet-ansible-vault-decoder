@@ -87,6 +87,7 @@ stages:
             name: "stripping_executable"
             displayName: stripping executable file
             inputs:
+              targetType: inline
               script: |
                 strip dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$RID/native/dotnet-ansible-vault-decoder$EXE_FILE_EXT
             condition: "ne(variables['imageName'],'windows-2019')"
@@ -94,6 +95,7 @@ stages:
             name: "copying_executable"
             displayName: "copying binary executable"
             inputs:
+              targetType: inline
               script: |
                 $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder$($env:EXE_FILE_EXT)"
                 $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID)$($env:EXE_FILE_EXT)"
@@ -102,6 +104,7 @@ stages:
             name: "copying_pdb"
             displayName: "copying pdb"
             inputs:
+              targetType: inline
               script: |
                 $srcpath = Join-Path "dotnet-ansible-vault-decoder/bin/Release/netcoreapp2.1/$($env:RID)/native" "dotnet-ansible-vault-decoder.pdb"
                 $destpath = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "dotnet-ansible-vault-decoder-$(env:RID).pdb"
